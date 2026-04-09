@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-from data import get_tee_times, get_weather  # <-- added get_weather
+from data import get_tee_times, get_weather, get_forecast
 
 app = Flask(__name__)
 
@@ -7,7 +7,7 @@ app = Flask(__name__)
 def home():
     source_filter = request.args.get("source", "")
     date_filter = request.args.get("date", "")
-    course_filter = request.args.get("course", "")  # <-- new
+    course_filter = request.args.get("course", "")
 
     all_tee_times = get_tee_times()
     filtered = all_tee_times
@@ -17,13 +17,11 @@ def home():
             t for t in filtered
             if course_filter.lower() in t["course"].lower()
         ]
-
     if source_filter:
         filtered = [
             t for t in filtered
             if source_filter.lower() in t["source"].lower()
         ]
-
     if date_filter:
         filtered = [
             t for t in filtered
@@ -40,14 +38,16 @@ def home():
             next_available = future_dates[0]
 
     weather = get_weather()
+    forecast = get_forecast()
 
     return render_template(
         "index.html",
         tee_times=filtered,
         current_filter=source_filter,
         current_date=date_filter,
-        current_course=course_filter,  # <-- new
+        current_course=course_filter,
         weather=weather,
+        forecast=forecast,
         next_available=next_available
     )
 

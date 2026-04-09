@@ -1,4 +1,5 @@
 import requests
+from bs4 import BeautifulSoup
 
 def get_tee_times():
     # This is still mock data for now
@@ -31,3 +32,25 @@ def get_weather():
         "windspeed": weather["windspeed"],
         "is_day": weather["is_day"]
     }
+def get_forecast():
+    url = "https://forecast.weather.gov/MapClick.php?CityName=San+Francisco&state=CA&site=MTR&textField1=37.7772&textField2=-122.4168"
+    
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, "lxml")
+    
+    forecast_items = soup.find(id="seven-day-forecast-list")
+    periods = forecast_items.find_all(class_="forecast-tombstone")
+    
+    forecasts = []
+    for period in periods:
+        name = period.find(class_="period-name").get_text(separator=" ")
+        temp = period.find(class_="temp").get_text()
+        desc = period.find(class_="short-desc").get_text(separator=" ")
+        
+        forecasts.append({
+            "period": name,
+            "temp": temp,
+            "description": desc
+        })
+    
+    return forecasts

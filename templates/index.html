@@ -20,6 +20,18 @@
     </p>
 </div>
 
+<!-- 7-Day Forecast from NWS via web scraping -->
+<div class="forecast-bar">
+    <strong>7-Day Forecast:</strong>
+    {% for f in forecast %}
+    <div class="forecast-item">
+        <div class="forecast-period">{{ f.period }}</div>
+        <div class="forecast-temp">{{ f.temp }}</div>
+        <div class="forecast-desc">{{ f.description }}</div>
+    </div>
+    {% endfor %}
+</div>
+
         <!-- FORM: method="get" means the input gets added to the URL -->
         <!-- action="/" means "send this data to the / route" -->
   <form method="get" action="/">
