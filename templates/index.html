@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Golf Tee Time App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Lincoln Park Tee Times</h1>
+        <p>Comparing available tee times from different sources.</p>
+
+        <!-- Display real live weather data from the API -->
+<div class="weather">
+    <p>⛳ Current conditions at Lincoln Park: 
+        <strong>{{ weather.temperature }}°F</strong> | 
+        Wind: <strong>{{ weather.windspeed }} km/h</strong> |
+        {{ "Daytime ☀️" if weather.is_day else "Nighttime 🌙" }}
+    </p>
+</div>
+
+        <!-- FORM: method="get" means the input gets added to the URL -->
+        <!-- action="/" means "send this data to the / route" -->
+  <form method="get" action="/">
+    <input
+        type="text"
+        name="course"
+        placeholder="Search course (e.g. Lincoln Park)"
+        value="{{ current_course }}"
+    >
+    <input
+        type="text"
+        name="source"
+        placeholder="Filter by source (e.g. GolfNow)"
+        value="{{ current_filter }}"
+    >
+    <input
+        type="date"
+        name="date"
+        value="{{ current_date }}"
+    >
+    <button type="submit">Search</button>
+    <a href="/">Clear</a>
+</form>
+
+        <table>
+    <thead>
+     <tr>
+    <th>Course</th>
+    <th>Date</th>
+    <th>Time</th>
+    <th>Price</th>
+    <th>Source</th>
+    <th>Holes</th>
+</tr>
+    </thead>
+ <tbody>
+    {% if tee_times %}
+        {% for tee_time in tee_times %}
+        <tr>
+            <td>{{ tee_time.course }}</td>
+            <td>{{ tee_time.date }}</td>
+            <td>{{ tee_time.time }}</td>
+            <td>${{ tee_time.price }}</td>
+            <td>{{ tee_time.source }}</td>
+            <td>{{ tee_time.holes }}</td>
+        </tr>
+        {% endfor %}
+    {% else %}
+        <tr>
+            <td colspan="6" class="no-results">
+                No tee times available for this selection.
+                {% if next_available %}
+                    Next available date is <strong>{{ next_available }}</strong>.
+                {% endif %}
+            </td>
+        </tr>
+    {% endif %}
+</tbody>
+</table>
+
+        <!-- Show how many results are showing -->
+        <p>Showing {{ tee_times|length }} tee times</p>
+    </div>
+</body>
+</html>
